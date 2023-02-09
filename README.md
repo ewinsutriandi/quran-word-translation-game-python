@@ -1,0 +1,1 @@
+Made for fast prototyping and game algorithm design, will be ported to web and/or mobile app sometimes in the future, insha Allah
