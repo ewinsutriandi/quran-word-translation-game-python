@@ -1,4 +1,5 @@
 import loader
+import generators
 import random
 
 def pick_sura_j30_plus_fatiha():
@@ -34,73 +35,36 @@ def pick_sura_j30_plus_fatiha():
         print("Nomor surat tidak ditemukan")
         return False
 
-def new_game(surah, cur_aya_idx=0):
-    ayahs = loader.load_surah_words_with_translation(surah["idx"])    
-    aya_keys = list(ayahs.keys())
-    
+def new_simple_game(surah,difficulty="EASY"):    
+    quiz_list = []
+    generator = generators.GenerateEasyDiffQuizFromSingleSura
+    if difficulty=="NORMAL":
+        generator = generators.GenerateMidDiffQuizFromSingleSura
+    quiz_list= generator(surah).generateQuizList()
     score = 0
-    lose = False    
-      
-    cur_ayah = ayahs[aya_keys[cur_aya_idx]]
-    words = cur_ayah["words"]
-    random.shuffle(words)
-    words[0]["is_correct"] = True
-
-    # cek jika ayat terdiri atas kurang dari 3 potongan kata
-    add_aya_idx = cur_aya_idx
-    additional_words = [] # menampung potongan kata tambahan
-    while len(words) < 3:
-        add_word_needed = 3 - len(words)
-        print("word needed:",add_word_needed)                
-        # jika masih ada ayat berikutnya
-        word_candidates = []
-        add_ayah = {}
-        if add_aya_idx+1 < len(aya_keys):
-            add_ayah = ayahs[aya_keys[add_aya_idx+1]]            
-        else: # ambil ayat sebelumnya
-            add_ayah = ayahs[aya_keys[add_aya_idx-1]]
-        word_candidates = add_ayah["words"]
-        cnt = 0
-        random.shuffle(word_candidates)
-        while cnt < add_word_needed and cnt < len(word_candidates):
-            print(cnt,add_word_needed,len(word_candidates))
-            word_exist = False
-            for w in words:
-                identical_text = w["uthmani"] == word_candidates[cnt]["uthmani"]
-                identical_trans = w["translation"] == word_candidates[cnt]["translation"]
-                if identical_text or identical_trans:
-                    word_exist = True
-                    break
-            if not word_exist:
-                additional_words.append(word_candidates[cnt])
-            cnt += 1    
-        words = words + additional_words
-    selected_words = words[:3]
-    for w in selected_words:
-        print(w)
-    print(cur_ayah["text"])    
-    uth = "uthmani"
-    trns = "translation"
-    print(f"Pada ayat tersebut:{selected_words[0][uth]} memiliki arti?")
-
-    choices = selected_words.copy()
-    random.shuffle(choices)
-    
-    print(f"a. {choices[0][trns]} b. {choices[1][trns]} c. {choices[2][trns]}")    
-    answer = input("Jawaban a/b/c: ")
-
-    selected_choice = None
-    if answer.lower() == "a":
-        selected_choice = choices[0]
-    elif  answer.lower() == "b":
-        selected_choice = choices[1]
-    elif  answer.lower() == "c":
-        selected_choice = choices[2]
-    
-    # print(selected_choice)
-    if "is_correct" in selected_choice:
-        return True    
-    return False
+    cur_quiz_idx = 0    
+    correct = True
+    while correct and cur_quiz_idx < len(quiz_list):
+        quiz = quiz_list[cur_quiz_idx]
+        print(quiz.question)
+        choices = quiz.choices
+        random.shuffle(choices)
+        choice_map = {
+            "a" : choices[0], "b" : choices[1], "c" : choices[2]
+        }
+        print(f"Pilih a. {choices[0]} b. {choices[1]} c. {choices[2]}")
+        answer = input("Jawab (a/b/c):")        
+        if answer in choice_map:
+            correct = choice_map[answer] == quiz.correct_answer
+        else:
+            print("\_0_/")
+            correct = False
+        if correct:
+            score += 1
+            cur_quiz_idx +=1
+        else:
+            print(f"Jawaban benar: {quiz.correct_answer}")
+    print(f"Permainan berakhir, skor anda: {score}")
 
 # surah = pick_sura_j30_plus_fatiha()
 # new_game(surah)

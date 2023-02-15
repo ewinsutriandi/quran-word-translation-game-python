@@ -1,7 +1,13 @@
-import loader
+import generators as g
+import game
 
-surah_words = loader.load_surah_words_with_translation("114")
-for k,aya in surah_words.items():
-    for l,word in aya.items():
-        pass
-        #print(word) 
+surah = game.pick_sura_j30_plus_fatiha()
+
+gen = g.GenerateMidDiffQuizFromSingleSura(surah)
+
+ql = gen.generateQuizList()
+
+for q in ql:
+    print(q.question)
+    print("jawaban:",q.correct_answer)
+    print()
