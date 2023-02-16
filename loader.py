@@ -6,6 +6,8 @@ def load_surah_all():
     file = open(PATH+"surah.json")
     surah_all = json.load(file)
     surah_all = __inject_sura_translit_id_into_sura_list(surah_all)
+    for k,v in surah_all.items():
+        surah_all[k]["idx"] = k
     return surah_all
 
 def __inject_sura_translit_id_into_sura_list(surah_all):

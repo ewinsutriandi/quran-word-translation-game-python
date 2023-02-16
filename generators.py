@@ -48,6 +48,31 @@ class GenerateMidDiffQuizFromSingleSura(QuizGenerator):
         random.shuffle(quiz_list)    
         return quiz_list
 
+class GenerateMidDiffQuizFromMultipleSura(QuizGenerator):
+    '''
+    Generate multiple choice quiz from multiple surah
+    Middle difficulty
+    Randomized words order within surah
+    '''
+    def __init__(self,list_surah) -> None:
+        self.list_surah = list_surah
+
+    def generateQuiz(self):
+        quiz_list = self.generateQuizList()
+        random.shuffle(quiz_list)
+        return quiz_list[0]
+    
+    def generateQuizList(self):
+        quiz_list = []
+        for surah_idx,surah in self.list_surah.items():
+            print(f"Loading surat no-{surah_idx}: {surah['nama']}")
+            aya_quiz_list = generateSurahQuizListGroupedByAyah(surah)
+            #print(aya_quiz_list)
+            for aya_quiz in aya_quiz_list:                                    
+                quiz_list += aya_quiz
+        random.shuffle(quiz_list)    
+        return quiz_list
+
 def construct_choices(aya_idx,ayahs,aya_keys,words):
     add_aya_idx = aya_idx
     additional_words = [] # menampung potongan kata tambahan
@@ -65,7 +90,7 @@ def construct_choices(aya_idx,ayahs,aya_keys,words):
         random.shuffle(word_candidates)
         cnt = 0
         while cnt < add_word_needed and cnt < len(word_candidates):
-            print(cnt,add_word_needed,len(word_candidates))
+            # print(cnt,add_word_needed,len(word_candidates))
             word_exist = False
             for w in words:
                 identical_text = w["uthmani"] == word_candidates[cnt]["uthmani"]
