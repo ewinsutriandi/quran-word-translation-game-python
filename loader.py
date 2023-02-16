@@ -20,14 +20,13 @@ def __inject_sura_translit_id_into_sura_list(surah_all):
 def load_juz_amma():
     start = 78
     end = 114
-    surah_j30 = []
+    surah_j30 = {}
     surah_all = load_surah_all()
+    # surah_j30["1"] = surah_all["1"]
+    # print(surah_j30,type(surah_j30))    
     for i in range(start,end+1):
-        surah = surah_all[str(i)]
-        surah_j30.append({
-                str(i): surah
-            })
-    surah_j30.reverse()    
+        surah = surah_all[str(i)]        
+        surah_j30[str(i)] = surah               
     return surah_j30
 
 def load_juz_amma_plus_fatiha():
